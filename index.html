@@ -5,13 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wiam ❤️</title>
     <style>
+        /* Ajout de box-sizing pour éviter que les paddings ne déforment les boîtes */
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh; /* min-height est plus sûr sur mobile */
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #333;
@@ -51,6 +56,7 @@
             border-radius: 12px;
             min-width: 70px;
             box-shadow: 0 4px 15px rgba(232, 67, 147, 0.3);
+            flex: 1; /* Permet aux boîtes de partager l'espace équitablement */
         }
         .time-box span {
             display: block;
@@ -86,59 +92,91 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+
+        /* --- CORRECTIONS POUR MOBILE --- */
+        @media (max-width: 500px) {
+            .container {
+                padding: 25px 15px; /* On réduit l'espace intérieur */
+                width: 95%;
+            }
+            h1 {
+                font-size: 1.8em; /* Titre plus petit pour éviter de déborder */
+            }
+            p.message {
+                font-size: 1.05em;
+                margin-bottom: 25px;
+            }
+            .countdown {
+                gap: 5px; /* Espacement réduit entre les boîtes */
+            }
+            .time-box {
+                padding: 10px 5px;
+                min-width: 0; /* On retire la largeur minimale stricte */
+            }
+            .time-box span {
+                font-size: 1.4em; /* Chiffres plus petits */
+            }
+            .time-box .label {
+                font-size: 0.7em; /* Texte Jours/Heures plus petit */
+            }
+            .heart {
+                font-size: 2.2em; /* Les 4 cœurs prennent moins de place */
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Wiaaaam, my loooove ❤️</h1>
-        <p class="message">Every second that passes brings me closer to you. I miss you so much and I can't wait for Sunday to finally hold you in my arms.</p>
-        
-        <div class="countdown" id="countdown">
-            <div class="time-box">
-                <span id="days">00</span>
-                <div class="label">Days</div>
-            </div>
-            <div class="time-box">
-                <span id="hours">00</span>
-                <div class="label">Hours</div>
-            </div>
-            <div class="time-box">
-                <span id="minutes">00</span>
-                <div class="label">Min</div>
-            </div>
-            <div class="time-box">
-                <span id="seconds">00</span>
-                <div class="label">Sec</div>
-            </div>
+<div class="container">
+    <h1>Wiaaaam, my loooove ❤️</h1>
+    <p class="message">Every second that passes brings me closer to you. I miss you so much and I can't wait for Sunday to finally hold you in my arms.</p>
+
+    <div class="countdown" id="countdown">
+        <div class="time-box">
+            <span id="days">00</span>
+            <div class="label">Days</div>
         </div>
-        
-        <div class="heart">❤️❤️❤️❤️</div>
+        <div class="time-box">
+            <span id="hours">00</span>
+            <div class="label">Hours</div>
+        </div>
+        <div class="time-box">
+            <span id="minutes">00</span>
+            <div class="label">Min</div>
+        </div>
+        <div class="time-box">
+            <span id="seconds">00</span>
+            <div class="label">Sec</div>
+        </div>
     </div>
 
-    <script>
-        // Target date: Sunday, March 8, 2026 at 13:00:00
-        const targetDate = new Date("March 8, 2026 13:00:00").getTime();
+    <p class="message">Seni çok özledim aşkım.</p>
+    <div class="heart">❤️❤️❤️❤️</div>
+</div>
 
-        const timer = setInterval(function() {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
+<script>
+    // Target date: Sunday, March 8, 2026 at 13:00:00
+    const targetDate = new Date("March 8, 2026 13:00:00").getTime();
 
-            if (distance <= 0) {
-                clearInterval(timer);
-                document.getElementById("countdown").innerHTML = "<div class='finished'>It's time! You're finally home! 🎉❤️</div>";
-                return;
-            }
+    const timer = setInterval(function() {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        if (distance <= 0) {
+            clearInterval(timer);
+            document.getElementById("countdown").innerHTML = "<div class='finished'>It's time! You're finally home! 🎉❤️</div>";
+            return;
+        }
 
-            document.getElementById("days").innerText = days.toString().padStart(2, '0');
-            document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
-            document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
-            document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
-        }, 1000);
-    </script>
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("days").innerText = days.toString().padStart(2, '0');
+        document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+        document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+        document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+    }, 1000);
+</script>
 </body>
 </html>
