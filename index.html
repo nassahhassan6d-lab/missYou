@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wiam ❤️</title>
     <style>
-        /* Ajout de box-sizing pour éviter que les paddings ne déforment les boîtes */
         * {
             box-sizing: border-box;
         }
@@ -16,11 +15,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* min-height est plus sûr sur mobile */
+            min-height: 100vh;
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #333;
             text-align: center;
+            overflow-x: hidden;
         }
         .container {
             background: rgba(255, 255, 255, 0.85);
@@ -30,23 +30,24 @@
             max-width: 600px;
             width: 90%;
             backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 1;
         }
-        h1 {
+        h1, h2, h3, h4, h5, h6 {
             color: #e84393;
-            font-size: 2.5em;
             margin-bottom: 10px;
         }
         p.message {
             font-size: 1.2em;
             font-weight: 500;
-            margin-bottom: 35px;
+            margin-bottom: 25px;
             color: #555;
             line-height: 1.5;
         }
         .countdown {
             display: flex;
             justify-content: space-around;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             gap: 10px;
         }
         .time-box {
@@ -56,7 +57,7 @@
             border-radius: 12px;
             min-width: 70px;
             box-shadow: 0 4px 15px rgba(232, 67, 147, 0.3);
-            flex: 1; /* Permet aux boîtes de partager l'espace équitablement */
+            flex: 1;
         }
         .time-box span {
             display: block;
@@ -70,6 +71,28 @@
             margin-top: 5px;
             font-weight: normal;
         }
+
+        /* --- BOUTON --- */
+        .special-btn {
+            background-color: transparent;
+            border: 2px solid #e84393;
+            color: #e84393;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+            font-family: inherit;
+        }
+        .special-btn:hover {
+            background-color: #e84393;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(232, 67, 147, 0.2);
+        }
+
         .heart {
             color: #e84393;
             font-size: 3em;
@@ -93,42 +116,221 @@
             to { opacity: 1; }
         }
 
-        /* --- CORRECTIONS POUR MOBILE --- */
+        /* --- MODAL --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            animation: slideIn 0.4s ease-out;
+            overflow: hidden;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.3s;
+            z-index: 10;
+        }
+        .close-modal:hover {
+            color: #e84393;
+        }
+        .modal h2 {
+            color: #e84393;
+            margin-top: 0;
+        }
+        .pickup-line {
+            color: #666;
+            font-size: 1.05em;
+            font-style: italic;
+            font-weight: 500;
+            margin: 15px 0;
+        }
+
+        /* --- ANIMATION MARIO AVEC FLEURS --- */
+        .mario-scene {
+            position: relative;
+            height: 180px;
+            background: #5c94fc;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+            border: 2px solid #000;
+        }
+        .mario-ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 30px;
+            background: #c84c0c;
+            border-top: 2px solid #000;
+        }
+        .pipe {
+            position: absolute;
+            bottom: 30px;
+            left: 5%;
+            width: 40px;
+            height: 40px;
+            background: #00aa00;
+            border: 2px solid #000;
+            border-bottom: none;
+        }
+        .pipe::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -5px;
+            width: 46px;
+            height: 10px;
+            background: #00aa00;
+            border: 2px solid #000;
+        }
+        .block {
+            position: absolute;
+            bottom: 80px;
+            left: 45%;
+            width: 25px;
+            height: 25px;
+            background: #f8d820;
+            border: 2px solid #000;
+            font-weight: bold;
+            color: #d82800;
+            line-height: 21px;
+            box-shadow: inset -2px -2px 0 rgba(0,0,0,0.2);
+            animation: blockHit 4s infinite linear;
+        }
+
+        /* Conteneur pour Mario et ses fleurs pour qu'ils bougent ensemble */
+        .mario-container {
+            position: absolute;
+            z-index: 10;
+            display: flex;
+            align-items: flex-end;
+            animation: marioSequence 4s infinite linear;
+        }
+        .mario {
+            font-size: 2.2em;
+        }
+        /* Le bouquet tenu par Mario (caché au début) */
+        .mario-held-flowers {
+            font-size: 1.3em;
+            margin-left: -15px; /* Superpose un peu sur Mario */
+            margin-bottom: 5px;
+            opacity: 0;
+            animation: flowerHoldSequence 4s infinite linear;
+        }
+
+        /* Le bouquet qui sort du bloc (caché au début) */
+        .popping-flowers {
+            position: absolute;
+            bottom: 80px;
+            left: 45%;
+            font-size: 1.5em;
+            z-index: 9;
+            opacity: 0;
+            animation: flowerPopSequence 4s infinite linear;
+        }
+
+        .princess {
+            position: absolute;
+            right: 5%;
+            bottom: 30px;
+            font-size: 2.2em;
+            z-index: 5;
+        }
+        .mario-heart {
+            position: absolute;
+            right: 8%;
+            bottom: 80px;
+            font-size: 1.5em;
+            opacity: 0;
+            animation: heartPop 4s infinite linear;
+        }
+
+        /* --- KEYFRAMES --- */
+        @keyframes marioSequence {
+            0%   { left: 6%; bottom: 20px; opacity: 0; }
+            10%  { left: 6%; bottom: 80px; opacity: 1; } /* Sort du tuyau */
+            15%  { left: 12%; bottom: 30px; } /* Atterrit */
+            30%  { left: 35%; bottom: 30px; } /* Court vers le bloc */
+            40%  { left: 45%; bottom: 80px; } /* Saute et tape le bloc */
+            50%  { left: 55%; bottom: 30px; } /* Atterrit (avec fleurs) */
+            75%  { left: 75%; bottom: 30px; } /* Arrive à la princesse */
+            100% { left: 75%; bottom: 30px; } /* Reste */
+        }
+
+        /* Animation du bouquet qui sort du bloc */
+        @keyframes flowerPopSequence {
+            0%, 39% { opacity: 0; bottom: 80px; transform: scale(0.5); }
+            40% { opacity: 1; bottom: 100px; transform: scale(1.2); } /* Surgit */
+            45% { opacity: 0; bottom: 80px; transform: scale(0.8); } /* Disparaît (attrapé) */
+            100% { opacity: 0; }
+        }
+
+        /* Animation du bouquet tenu par Mario */
+        @keyframes flowerHoldSequence {
+            0%, 44% { opacity: 0; }
+            45%, 100% { opacity: 1; } /* Apparaît dans les mains de Mario après le saut */
+        }
+
+        @keyframes blockHit {
+            0%, 39% { transform: translateY(0); }
+            40% { transform: translateY(-5px); background: #b09810; } /* Change couleur et sursaute */
+            45%, 100% { transform: translateY(0); background: #b09810; } /* Reste gris/visité */
+        }
+
+        @keyframes heartPop {
+            0%, 75% { opacity: 0; transform: translateY(0) scale(0.5); }
+            80% { opacity: 1; transform: translateY(-15px) scale(1.2); }
+            90%, 100% { opacity: 1; transform: translateY(-20px) scale(1); }
+        }
+
+        /* --- RESPONSIVE MOBILE --- */
         @media (max-width: 500px) {
-            .container {
-                padding: 25px 15px; /* On réduit l'espace intérieur */
-                width: 95%;
-            }
-            h1 {
-                font-size: 1.8em; /* Titre plus petit pour éviter de déborder */
-            }
-            p.message {
-                font-size: 1.05em;
-                margin-bottom: 25px;
-            }
-            .countdown {
-                gap: 5px; /* Espacement réduit entre les boîtes */
-            }
-            .time-box {
-                padding: 10px 5px;
-                min-width: 0; /* On retire la largeur minimale stricte */
-            }
-            .time-box span {
-                font-size: 1.4em; /* Chiffres plus petits */
-            }
-            .time-box .label {
-                font-size: 0.7em; /* Texte Jours/Heures plus petit */
-            }
-            .heart {
-                font-size: 2.2em; /* Les 4 cœurs prennent moins de place */
-            }
+            .container { padding: 25px 15px; width: 95%; }
+            h1 { font-size: 1.8em; }
+            p.message { font-size: 1.05em; margin-bottom: 20px; }
+            .countdown { gap: 5px; margin-bottom: 15px; }
+            .time-box { padding: 10px 5px; min-width: 0; }
+            .time-box span { font-size: 1.4em; }
+            .time-box .label { font-size: 0.7em; }
+            .modal-content { padding: 20px; }
+            .mario-scene { height: 150px; }
+            .mario { font-size: 1.8em; }
+            .mario-held-flowers { font-size: 1.1em; margin-left: -12px; }
+            .princess { font-size: 1.8em; }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Wiaaaam, my loooove ❤️</h1>
-    <p class="message">Counting down the seconds until you're back in my arms. <br><b>I miss you</b> ❤️❤️</p>
+    <h1>Wiaaaam, the love of my life ❤️</h1>
+    <p class="message">Counting down the seconds until you're back in my arms. I miss you!</p>
 
     <div class="countdown" id="countdown">
         <div class="time-box">
@@ -149,6 +351,9 @@
         </div>
     </div>
 
+    <button class="special-btn" id="openModalBtn">can't wiat ?</button>
+
+    <br>
     <div class="heart">
         ❤️❤️❤️❤️
         <br>
@@ -157,8 +362,32 @@
     <p class="message">Seni seviyorum ❤️❤️</p>
 </div>
 
+<div id="teleportModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" id="closeModalBtn">&times;</span>
+
+        <p class="pickup-line">"The ultimate safe place is right here in my arms." 🏰❤️</p>
+
+        <div class="mario-scene">
+            <div class="mario-ground"></div>
+            <div class="pipe"></div>
+            <div class="block">?</div>
+
+            <div class="popping-flowers">💐</div>
+
+            <div class="mario-container">
+                <div class="mario">👨🏻‍🔧</div>
+                <div class="mario-held-flowers">💐</div>
+            </div>
+
+            <div class="princess">👸🏻</div>
+            <div class="mario-heart">❤️</div>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Target date: Sunday, March 8, 2026 at 13:00:00
+    // Configuration de la date cible : Dimanche 8 Mars 2026 à 13:00:00
     const targetDate = new Date("March 8, 2026 13:00:00").getTime();
 
     const timer = setInterval(function() {
@@ -168,6 +397,7 @@
         if (distance <= 0) {
             clearInterval(timer);
             document.getElementById("countdown").innerHTML = "<div class='finished'>It's time! You're finally home! 🎉❤️</div>";
+            document.getElementById("openModalBtn").style.display = 'none';
             return;
         }
 
@@ -181,6 +411,16 @@
         document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
         document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
     }, 1000);
+
+    const modal = document.getElementById("teleportModal");
+    const btn = document.getElementById("openModalBtn");
+    const span = document.getElementById("closeModalBtn");
+
+    btn.onclick = function() { modal.style.display = "flex"; }
+    span.onclick = function() { modal.style.display = "none"; }
+    window.onclick = function(event) {
+        if (event.target == modal) { modal.style.display = "none"; }
+    }
 </script>
 </body>
 </html>
